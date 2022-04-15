@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import moment from "moment";
 import Stack from "@mui/material/Stack";
@@ -9,7 +9,7 @@ import TextField from "@mui/material/TextField";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 import DatePicker from "@material-ui/lab/DatePicker";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const useStyles = makeStyles({
   table: {
@@ -25,11 +25,11 @@ const initialState = {
 };
 
 const axios = require("axios");
-export default function AddDoc() {
+export default function UpdateDoc() {
   const [state, setState] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
-  const [selectedDate, handleDateChange] = useState(initialState.upload_date);
+  const [selectedDate, setDateChange] = useState(initialState.upload_date);
 
   const classe = useStyles();
 
@@ -46,6 +46,24 @@ export default function AddDoc() {
   };
 
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const loadById = () => {
+    axios
+      .get(`http://localhost:3001/documents/${id}`)
+      .then((res) => {
+        setState(res.data);
+        setDateChange(res.data.upload_date);
+      })
+      .catch((err) => {
+        setErrors(err.response);
+      });
+  };
+
+  useEffect(() => {
+    loadById();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -61,16 +79,9 @@ export default function AddDoc() {
     if (Object.keys(errors).length === 0 && !isSubmit) {
       setIsSubmit(true);
       axios
-        .post("http://localhost:3001/documents", data)
+        .put(`http://localhost:3001/documents/${id}`, data)
         .then((res) => {
           setIsSubmit(false);
-
-          setState({
-            title: "",
-            author: "",
-            upload_date: new Date(),
-            description: "",
-          });
 
           setTimeout(() => {
             navigate("/");
@@ -148,7 +159,9 @@ export default function AddDoc() {
               value={selectedDate}
               error={errors.upload_date ? true : false}
               helperText={errors.upload_date ? errors.upload_date : ""}
-              onChange={handleDateChange}
+              onChange={(newValue) => {
+                setDateChange(newValue);
+              }}
               renderInput={(props) => <TextField {...props} />}
             />
           </LocalizationProvider>
@@ -184,7 +197,7 @@ export default function AddDoc() {
           </Button>
         </Link>
         <Button variant="outlined" onClick={handleSubmit}>
-          Register
+          Update
         </Button>
       </Stack>
     </div>
