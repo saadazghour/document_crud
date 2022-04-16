@@ -176,7 +176,7 @@ export default function AddDoc() {
         alignItems="center"
         mt={2}
         mb={4}
-        spacing={10}
+        spacing={8}
       >
         <Link to="/" style={{ textDecoration: "none" }}>
           <Button variant="outlined" color="error">
