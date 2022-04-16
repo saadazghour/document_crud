@@ -64,6 +64,10 @@ export default function ExportDefaultToolbar() {
     setOpen(false);
   };
 
+  const reload = (params) => {
+    window.location.reload();
+  };
+
   const handleDelete = (event, id) => {
     event.preventDefault();
 
@@ -71,9 +75,10 @@ export default function ExportDefaultToolbar() {
       .delete(`http://localhost:3001/documents/${id}`)
       .then((res) => {
         handleClose();
+        reload();
       })
       .catch((err) => {
-        console.log(err.response);
+        // console.log(err.response);
       });
   };
 
@@ -170,7 +175,7 @@ export default function ExportDefaultToolbar() {
         setDocumentData(res.data);
       })
       .catch((err) => {
-        console.log(err.response);
+        // console.log(err.response);
       });
   };
 
