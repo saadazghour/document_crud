@@ -1,6 +1,5 @@
 // @ts-nocheck
 import React, { useState, useEffect } from "react";
-import { DataGrid } from "@mui/x-data-grid";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import Stack from "@mui/material/Stack";
@@ -15,6 +14,14 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableContainer from "@mui/material/TableContainer";
 import { Link } from "react-router-dom";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import PrintIcon from "@mui/icons-material/Print";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+} from "@mui/x-data-grid";
 
 const useStyles = makeStyles({
   table: {
@@ -183,6 +190,26 @@ export default function ExportDefaultToolbar() {
     loadDocuments();
   }, []);
 
+  const handlePdf = (params) => {
+    console.log("Pdf Generated!!");
+  };
+
+  function CustomToolbar() {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarExport
+          csvOptions={{ disableToolbarButton: true }}
+          printOptions={{
+            hideFooter: true,
+            hideToolbar: true,
+            hideHeader: true,
+            fileName: "Generating_PDF",
+          }}
+        />
+      </GridToolbarContainer>
+    );
+  }
+
   return (
     <div className={useStyle.table} style={{ height: 400, width: "100%" }}>
       <TableContainer component={Paper}>
@@ -207,7 +234,11 @@ export default function ExportDefaultToolbar() {
                       Add
                     </Button>
                   </Link>
-                  {/*  */}
+                  <Tooltip title="Generate pdf">
+                    <IconButton onClick={handlePdf}>
+                      <PrintIcon />
+                    </IconButton>
+                  </Tooltip>
                 </ButtonGroup>
               </StyledTable>
             </TableRow>
@@ -221,6 +252,7 @@ export default function ExportDefaultToolbar() {
         columns={columns}
         disableColumnFilter={true}
         disableDensitySelector={true}
+        components={{ Toolbar: CustomToolbar }}
       />
     </div>
   );
