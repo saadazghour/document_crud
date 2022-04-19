@@ -191,7 +191,7 @@ export default function UpdateDoc() {
         mb={4}
         spacing={10}
       >
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/review" style={{ textDecoration: "none" }}>
           <Button variant="outlined" color="error">
             Cancel
           </Button>

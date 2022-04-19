@@ -178,7 +178,7 @@ export default function AddDoc() {
         mb={4}
         spacing={8}
       >
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/review" style={{ textDecoration: "none" }}>
           <Button variant="outlined" color="error">
             Cancel
           </Button>
