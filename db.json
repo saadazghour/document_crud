@@ -1,12 +1,5 @@
 {
-  "users": [
-    {
-      "email": "saad.azghour@gmail.com",
-      "password": "$2a$10$PkAJsOS2bpZnBfSIuoKmXOM6oxpKlpg.Twx6d/qQ3Vcf9F.z.ctTC",
-      "password_confirm": "123456",
-      "id": 1
-    }
-  ],
+  "users": [],
   "documents": [
     {
       "title": "The first title",
