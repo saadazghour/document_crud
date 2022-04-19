@@ -1,22 +1,31 @@
 // @ts-nocheck
 import React, { useState, useEffect } from "react";
-import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import Stack from "@mui/material/Stack";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import TableRow from "@mui/material/TableRow";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableContainer from "@mui/material/TableContainer";
+
+import {
+  Typography,
+  TextField,
+  TableRow,
+  TableHead,
+  IconButton,
+  TableContainer,
+  ButtonGroup,
+  Button,
+  Paper,
+  Tooltip,
+  TableCell,
+  tableCellClasses,
+  styled,
+  Stack,
+  Modal,
+  Table,
+  Box,
+} from "@mui/material";
+
 import { Link } from "react-router-dom";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
 import PrintIcon from "@mui/icons-material/Print";
+import QRCode from "qrcode";
+
 import {
   DataGrid,
   GridToolbarContainer,
@@ -60,6 +69,9 @@ export default function ExportDefaultToolbar() {
   const [documentData, setDocumentData] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemId, setItemId] = useState(null);
+  const [value, setValue] = useState();
+  const [name, setName] = useState([]);
+  const [imageUrl, setImageUrl] = useState();
   const useStyle = useStyles();
 
   const handleOpen = (id) => {
@@ -79,7 +91,7 @@ export default function ExportDefaultToolbar() {
     event.preventDefault();
 
     axios
-      .delete(`http://localhost:3001/documents/${id}`)
+      .delete(`documents/${id}`)
       .then((res) => {
         handleClose();
         reload();
@@ -175,23 +187,51 @@ export default function ExportDefaultToolbar() {
     },
   ];
 
-  const loadDocuments = (params) => {
-    axios
-      .get("http://localhost:3001/documents")
+  const loadDocuments = async (params) => {
+    await axios
+      .get("documents")
       .then((res) => {
         setDocumentData(res.data);
       })
       .catch((err) => {
-        // console.log(err.response);
+        console.error(err.response);
+      });
+  };
+
+  const getUsers = async () => {
+    const headers = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tk")}`,
+      },
+    };
+
+    await axios
+      .get("660/users", headers)
+      .then((res) => {
+        setName(res.data);
+      })
+      .catch((err) => {
+        console.error(err.response);
       });
   };
 
   useEffect(() => {
     loadDocuments();
+    getUsers();
   }, []);
 
-  const handlePdf = (params) => {
-    console.log("Pdf Generated!!");
+  const logout = (params) => {
+    localStorage.removeItem("tk");
+  };
+
+  const handleQRCode = async () => {
+    console.log("Generate QRCode");
+    // try {
+    //   const res = await QRCode.toDataURL(value);
+    //   setImageUrl(res);
+    // } catch (err) {
+    //   console.error(err);
+    // }
   };
 
   function CustomToolbar() {
@@ -220,10 +260,42 @@ export default function ExportDefaultToolbar() {
         >
           <TableHead>
             <TableRow>
-              <StyledTable align="right"></StyledTable>
-              <StyledTable align="right"></StyledTable>
-              <StyledTable align="right"></StyledTable>
-              <StyledTable align="right"></StyledTable>
+              <StyledTable align="right">
+                <ButtonGroup
+                  variant="outlined"
+                  aria-label="outlined button group"
+                >
+                  {name[0] && name[0].email ? (
+                    <Typography
+                      style={{ color: "black", marginRight: "100px" }}
+                      variant="h6"
+                      component="div"
+                    >
+                      You are Authenticated, Welcome {name[0].email}
+                    </Typography>
+                  ) : (
+                    <Typography
+                      style={{ color: "black", marginRight: "100px" }}
+                      variant="h6"
+                      component="div"
+                    >
+                      You are Unauthenticated!
+                    </Typography>
+                  )}
+
+                  <Link to="/" style={{ textDecoration: "none" }}>
+                    <Button
+                      onClick={logout}
+                      color="primary"
+                      style={{ marginRight: "6px" }}
+                    >
+                      Logout
+                    </Button>
+                  </Link>
+                </ButtonGroup>
+              </StyledTable>
+            </TableRow>
+            <TableRow>
               <StyledTable align="right">
                 <ButtonGroup
                   variant="outlined"
@@ -234,8 +306,18 @@ export default function ExportDefaultToolbar() {
                       Add
                     </Button>
                   </Link>
-                  <Tooltip title="Generate pdf">
-                    <IconButton onClick={handlePdf}>
+                  {/* <div>
+                    <TextField
+                      id="outlined-QrCode"
+                      placeholder="Value of Qr-code"
+                      name="qrcode"
+                      onChange={(e) => setValue(e.target.value)}
+                      required
+                      focused
+                    />
+                  </div> */}
+                  <Tooltip title="Generate QRCode">
+                    <IconButton onClick={handleQRCode}>
                       <PrintIcon />
                     </IconButton>
                   </Tooltip>
@@ -254,6 +336,14 @@ export default function ExportDefaultToolbar() {
         disableDensitySelector={true}
         components={{ Toolbar: CustomToolbar }}
       />
+
+      <div style={{ padding: "20px", marginTop: "16px" }}>
+        {imageUrl && (
+          <a href={imageUrl} download="qr_code">
+            <img src={imageUrl} alt="qr_code" />
+          </a>
+        )}
+      </div>
     </div>
   );
 }
