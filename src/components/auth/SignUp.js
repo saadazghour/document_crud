@@ -17,6 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 const useStyles = makeStyles({
   table: {
     marginTop: 140,
+    marginBottom: 40,
   },
 });
 
@@ -148,7 +149,14 @@ export default function SignUp() {
             Sign Up
           </Typography>
         </div>
-        <div>
+        <div style={{ color: "red", fontSize: "larger" }}>
+          {errors && errors.data ? errors.data : ""}
+        </div>
+        <div
+          style={{
+            marginTop: "30px",
+          }}
+        >
           <TextField
             id="outlined-title"
             label="Email"
