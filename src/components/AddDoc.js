@@ -61,7 +61,7 @@ export default function AddDoc() {
     if (Object.keys(errors).length === 0 && !isSubmit) {
       setIsSubmit(true);
       axios
-        .post("http://localhost:3001/documents", data)
+        .post("documents", data)
         .then((res) => {
           setIsSubmit(false);
 

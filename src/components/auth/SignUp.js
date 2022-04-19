@@ -87,7 +87,7 @@ export default function SignUp() {
     if (Object.keys(errors).length === 0 && !isSubmit) {
       setIsSubmit(true);
       axios
-        .post("http://localhost:3001/signup", data)
+        .post("signup", data)
         .then((res) => {
           setIsSubmit(false);
 
@@ -97,7 +97,7 @@ export default function SignUp() {
             password_confirm: "",
           });
 
-          // Status Code: 201 Created
+          // Status Code: 201 User Created
           if (res.data.accessToken) {
             setTimeout(() => {
               navigate("/");

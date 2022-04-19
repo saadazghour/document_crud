@@ -50,7 +50,7 @@ export default function UpdateDoc() {
 
   const loadById = () => {
     axios
-      .get(`http://localhost:3001/documents/${id}`)
+      .get(`documents/${id}`)
       .then((res) => {
         setState(res.data);
         setDateChange(res.data.upload_date);
@@ -79,7 +79,7 @@ export default function UpdateDoc() {
     if (Object.keys(errors).length === 0 && !isSubmit) {
       setIsSubmit(true);
       axios
-        .put(`http://localhost:3001/documents/${id}`, data)
+        .put(`documents/${id}`, data)
         .then((res) => {
           setIsSubmit(false);
 
