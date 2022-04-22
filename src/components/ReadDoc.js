@@ -22,7 +22,7 @@ import {
   Box,
 } from "@mui/material";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PrintIcon from "@mui/icons-material/Print";
 import QRCode from "qrcode";
 
@@ -65,13 +65,14 @@ const style = {
 
 const axios = require("axios");
 
-export default function ExportDefaultToolbar() {
+export default function ReadDoc() {
   const [documentData, setDocumentData] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemId, setItemId] = useState(null);
   const [value, setValue] = useState();
   const [name, setName] = useState([]);
   const [imageUrl, setImageUrl] = useState();
+  const navigate = useNavigate();
   const useStyle = useStyles();
 
   const handleOpen = (id) => {
@@ -97,7 +98,7 @@ export default function ExportDefaultToolbar() {
         reload();
       })
       .catch((err) => {
-        // console.log(err.response);
+        console.error(err.response);
       });
   };
 
@@ -211,13 +212,19 @@ export default function ExportDefaultToolbar() {
         setName(res.data);
       })
       .catch((err) => {
-        console.error(err.response);
+        if (
+          err.response.data === "jwt expired" ||
+          err.response.data === "jwt malformed"
+        ) {
+          navigate("/");
+        }
       });
   };
 
   useEffect(() => {
     loadDocuments();
     getUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const logout = (params) => {
@@ -228,6 +235,7 @@ export default function ExportDefaultToolbar() {
     console.log("Generate QRCode");
     // try {
     //   const res = await QRCode.toDataURL(value);
+    //   console.log("res", res);
     //   setImageUrl(res);
     // } catch (err) {
     //   console.error(err);
